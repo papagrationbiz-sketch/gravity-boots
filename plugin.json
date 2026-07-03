@@ -1,0 +1,6 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "gravity-boots",
+  "description": "Grounding kit for Google Antigravity. Enforces Quality Gates (truthfulness) and ultra-compressed communication (Genshijin/Caveman) with automatic RTK shell integration.",
+  "version": "1.0.0"
+}
