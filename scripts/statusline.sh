@@ -79,6 +79,22 @@ G1W_COL=$(get_limit_color $G1W $CYAN)
 C5H_COL=$(get_limit_color $C5H $YELLOW)
 C1W_COL=$(get_limit_color $C1W $YELLOW)
 
+# 5h用の時間表示フォーマット（後何時間何分）
+format_reset_in_seconds() {
+  local sec=$1
+  if [ -z "$sec" ] || [ "$sec" -le 0 ]; then
+    printf ""
+    return
+  fi
+  local h=$((sec / 3600))
+  local m=$(( (sec % 3600) / 60 ))
+  if [ $h -gt 0 ]; then
+    printf "(in %dh%dm)" "$h" "$m"
+  else
+    printf "(in %dm)" "$m"
+  fi
+}
+
 parse_iso_to_epoch() {
   local iso="$1"
   # Try BSD date (macOS)
@@ -113,7 +129,8 @@ format_epoch_local() {
   printf ""
 }
 
-format_reset_time() {
+# 1w用の時間表示フォーマット（リセット日時）
+format_reset_datetime() {
   local iso="$1"
   local sec="$2"
   if [ -z "$iso" ] || [ "$iso" = "null" ] || [ "$sec" -le 0 ]; then
@@ -131,10 +148,10 @@ format_reset_time() {
   printf ""
 }
 
-G5H_RST=$(format_reset_time "$G5H_TIME" "$G5H_RESET")
-G1W_RST=$(format_reset_time "$G1W_TIME" "$G1W_RESET")
-C5H_RST=$(format_reset_time "$C5H_TIME" "$C5H_RESET")
-C1W_RST=$(format_reset_time "$C1W_TIME" "$C1W_RESET")
+G5H_RST=$(format_reset_in_seconds "$G5H_RESET")
+G1W_RST=$(format_reset_datetime "$G1W_TIME" "$G1W_RESET")
+C5H_RST=$(format_reset_in_seconds "$C5H_RESET")
+C1W_RST=$(format_reset_datetime "$C1W_TIME" "$C1W_RESET")
 
 # モデル選択の動的色
 if [[ "$MODEL" == *Gemini* ]]; then MODEL_COLOR="${CYAN}"; elif [[ "$MODEL" == *Claude* ]]; then MODEL_COLOR="${YELLOW}"; else MODEL_COLOR="\033[1;37m"; fi
@@ -144,8 +161,8 @@ if [[ "$MODEL" == *Gemini* ]]; then MODEL_COLOR="${CYAN}"; elif [[ "$MODEL" == *
 # 1行目：Repo branch Directory
 printf "[${GREEN}%s/%s${RESET}] %s\n" "$REPO" "$BRANCH" "$SHORT_CWD"
 
-# 2行目：Model Ctx Tokens
-printf "Model: ${MODEL_COLOR}%s${RESET} | Ctx: ${CTX_COLOR}%s%%${RESET} | Tokens: %s in / %s out\n" "$MODEL" "$CTX_PCT" "$IN_TOK" "$OUT_TOK"
+# 2行目：Model Ctx Tokens (絵文字に置き換え)
+printf "🧠 ${MODEL_COLOR}%s${RESET} | 📊 ${CTX_COLOR}%s%%${RESET} | 🔢 %s in / %s out\n" "$MODEL" "$CTX_PCT" "$IN_TOK" "$OUT_TOK"
 
 # 3行目：Gemini Claude
 printf "${CYAN}◆ Gem${RESET} 5h:${G5H_COL}%s%%%s${RESET} 1w:${G1W_COL}%s%%%s${RESET} | ${YELLOW}● Cld${RESET} 5h:${C5H_COL}%s%%%s${RESET} 1w:${C1W_COL}%s%%%s${RESET}\n" \
