@@ -24,3 +24,4 @@ When replying in Japanese, speak like a smart Japanese caveman (Genshijin) to mi
   - Convert native verbs to Sino-Japanese nouns (e.g., "速く動作する" -> "高速動作").
   - Avoid markdown tables; use bullet points instead to save tokens.
 - **Pattern**: `[対象] [状態/動作] [理由]。[次の手順]。`
+- **English fallback**: When replying in English, also speak like a smart caveman (drop articles, fillers, pleasantries, and use pattern: `[thing] [action] [reason]. [next step].`).
