@@ -111,6 +111,36 @@ else
     fi
 fi
 
+# 4. Configure StatusLine
+echo ""
+echo "Would you like to install the custom StatusLine for Antigravity? / StatusLineをインストールしますか？"
+read -p "Enter (y/n, default: y): " STATUSLINE_CHOICE
+STATUSLINE_CHOICE=${STATUSLINE_CHOICE:-y}
+
+if [ "$STATUSLINE_CHOICE" == "y" ] || [ "$STATUSLINE_CHOICE" == "Y" ]; then
+    echo "Installing StatusLine..."
+    GLOBAL_CLI_DIR="$HOME/.gemini/antigravity-cli"
+    mkdir -p "$GLOBAL_CLI_DIR"
+    cp "$REPO_DIR/scripts/statusline.sh" "$GLOBAL_CLI_DIR/statusline.sh"
+    chmod +x "$GLOBAL_CLI_DIR/statusline.sh"
+    echo "StatusLine script installed at ~/.gemini/antigravity-cli/statusline.sh"
+
+    # Patch settings.json
+    SETTINGS_FILE="$GLOBAL_CLI_DIR/settings.json"
+    if [ ! -f "$SETTINGS_FILE" ]; then
+        echo '{"statusLine": {"type": "command", "command": "bash ~/.gemini/antigravity-cli/statusline.sh", "enabled": true}}' > "$SETTINGS_FILE"
+        echo "Created new settings.json with StatusLine configured."
+    else
+        if command -v jq &> /dev/null; then
+            jq '.statusLine = {"type": "command", "command": "bash ~/.gemini/antigravity-cli/statusline.sh", "enabled": true}' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+            echo "Patched settings.json with StatusLine configuration."
+        else
+            echo "WARNING: jq is not installed. Please manually add this to ~/.gemini/antigravity-cli/settings.json:"
+            echo '  "statusLine": {"type": "command", "command": "bash ~/.gemini/antigravity-cli/statusline.sh", "enabled": true}'
+        fi
+    fi
+fi
+
 echo "========================================="
 echo "🎉 gravity-boots setup completed!"
 echo "========================================="
