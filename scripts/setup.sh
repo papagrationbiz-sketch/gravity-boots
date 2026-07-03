@@ -83,6 +83,34 @@ else
     echo "English rules activated at rules/quality-gate-rules.md"
 fi
 
+# 3. Patch ~/.gemini/GEMINI.md to load these rules
+echo ""
+echo "Patching ~/.gemini/GEMINI.md..."
+GLOBAL_GEMINI_DIR="$HOME/.gemini"
+GLOBAL_GEMINI_FILE="$GLOBAL_GEMINI_DIR/GEMINI.md"
+
+mkdir -p "$GLOBAL_GEMINI_DIR"
+
+IMPORT_RULE_1="@~/.gemini/antigravity-cli/plugins/gravity-boots/rules/quality-gate-rules.md"
+IMPORT_RULE_2="@~/.gemini/antigravity-cli/plugins/gravity-boots/rules/antigravity-rtk-rules.md"
+
+if [ ! -f "$GLOBAL_GEMINI_FILE" ]; then
+    echo "Creating new ~/.gemini/GEMINI.md..."
+    cp "$REPO_DIR/GEMINI.md" "$GLOBAL_GEMINI_FILE"
+    echo "Global GEMINI.md created."
+else
+    # Check if imports already exist
+    if grep -q "gravity-boots/rules" "$GLOBAL_GEMINI_FILE"; then
+        echo "Imports already exist in ~/.gemini/GEMINI.md. Skipping patch."
+    else
+        echo "Adding import references to ~/.gemini/GEMINI.md..."
+        echo -e "\n# gravity-boots plugin rules" >> "$GLOBAL_GEMINI_FILE"
+        echo "$IMPORT_RULE_1" >> "$GLOBAL_GEMINI_FILE"
+        echo "$IMPORT_RULE_2" >> "$GLOBAL_GEMINI_FILE"
+        echo "Global GEMINI.md patched successfully."
+    fi
+fi
+
 echo "========================================="
 echo "🎉 gravity-boots setup completed!"
 echo "========================================="
