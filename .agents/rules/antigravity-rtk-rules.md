@@ -30,9 +30,3 @@ rtk proxy <cmd>       # Run raw (no filtering, for debugging)
 ## Why
 
 RTK filters and compresses command output before it reaches the LLM context, saving 60-90% tokens on common operations. Always use `rtk <cmd>` instead of raw commands.
-
-## Setup and Auto-Installation
-
-If `rtk` command is not available in the shell:
-1. Ask the user: "RTK (Rust Token Killer) is not installed. Would you like to install it to save 60-90% of command token costs? (y/n)"
-2. If confirmed, run the同梱 setup script: `./scripts/setup.sh` to automatically install and configure RTK for this environment.
